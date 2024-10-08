@@ -1,7 +1,8 @@
 ---
-site_name: LAB-1451 Device xAPI, Room Customization and Deployment # This must begin with the session ID, e.g. LABXXX-1234 This is my Cisco Live Lab
-site_description: LAB-1451 Device xAPI, Room Customization and Deployment # must be same as "site_name"
-site_author: John Doe
+site_name: Video Device xAPI Lab # This must begin with the session ID, e.g. LABXXX-1234 This is my Cisco Live Lab
+site_description: Video Device xAPI Lab # must be same as "site_name"
+site_author: Robert(Bobby) McGonigle Jr
+dev_addr: 127.0.0.1:8100
 copyright: Copyright &copy; 2024 Cisco
 theme:
   name: material
@@ -88,11 +89,14 @@ nav:
   - Home&nbsp<i class="fa-solid fa-house" style="color:#B197FC;"></i>: index.md
   - Lab&nbsp<i class="fa-solid fa-flask" style="color:#fdd649;"></i>:
       - Lab Overview: overview.md
-      - Part 1&colon; Lab Setup: wx1_1451_part_1.md
-      - Part 2&colon; - Accessing Device xAPI : wx1_1451_part_2.md
-      - Part 3&colon; - Building a Customization using Macros: wx1_1451_part_3.md
-      - Part 4&colon; - Deploying your Customization: wx1_1451_part_4.md
-      - Conclusion: conclusion.md
+      # - Part 1&colon; Lab Setup: wx1_1451_part_1.md
+      - Lab&colon; Accessing Device xAPI : wx1_1451_part_2.md
+      - Lab&colon; Utilizing AV Specific APIs: AV_xAPI.md
+      - Lab&colon; Build Room Documentation Macro: wx1_1451_part_3.md
+      - Lab&colon; Implement Codec to Codec Communication: CodectoCodec.md
+      - Lab&colon; WorkSpace Integrations: WorkSpaceIntegrations.md
+      - Lab&colon; Deploying your Customization: wx1_1451_part_4.md
+      # - Conclusion: conclusion.md
   - Tools&nbsp<i class="fa-solid fa-gear"></i>: tools.md
   - Ask a Question&nbsp<i class="fa-solid fa-hand" style="color:#63E6BE;"></i>: slido-QA-iFrame.md
   - Cheat Sheet&nbsp<i class="fa-solid fa-screwdriver-wrench" style="color:#1eeb40;"></i>:
