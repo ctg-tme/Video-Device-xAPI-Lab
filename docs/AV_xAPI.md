@@ -84,7 +84,7 @@
     - **Task**: 
 
         - Install the ==Video Compositing Demo== Macro from the AV-MacroPak.zip file
-        - Activate this Macro
+        - Save and Activate this Macro
             - It will spawn a UserInterface for your with all your available sources
         - Goes through each Page in this macro and build new compositions on the fly using the various controls
         
@@ -397,6 +397,394 @@
         </figure>
 
 ??? lesson "Lesson: Triple Click Example"
+
+    !!! info
+
+        At times, we may want to build in tools that should only be available to super users or device admins in a space
+
+        It's common to see hidden interfaces in the wild that allow users to make changes to there space that the everyday user need not interact with, such as modifying a gain structure for Microphones or Re-Routing Displays
+
+        But at face value, our UI Extensions don't offer an obvious solution to that need when you first dive into them
+
+        You may have noticed, while interacting with the Panel Properties, that you can set the Location to "Hidden"
+
+        This allows you to have a UserInterface that's not visible on the touch interface, but can still be opened programmatically via the API
+
+    - Install the ==Triple Click Demo== Macro from the AV-MacroPak.zip file
+    - Save and Activate this Macro
+        - It will spawn a UserInterface for your with a panel called User Facing Panel
+    - Click the Panel and it will open up an interface we want our average user to access
+    - Close the panel and then quickly click the panel 3 times to reveal a hidden interface :smiley:
+    
+    ??? tip "Timing is Key"
+
+        If you inspect the Macro, we're leveraging the SetTimeout and ClearTimeout functions built into ES6 JS to facilitate this action
+
+        Each time the panel is clicked within certain number of milliseconds, we increase a counter and if we reach 3 clicks, we'll open up our hidden interface
+    
+    !!! challenge "Let's Pin Protect this Hidden Interface!"
+
+        Sometimes, a user may find a hidden interface like this, so in order to further prevent access to it, we can use a TextInput prompt that asks for a pin, before we allow access to this interface
+
+        - **xAPI(s)**: 
+            - xCommand UserInterface Message TextInput Display
+            - xEvent UserInterface Message TextInput Response
+            - xCommand UserInterface Extensions Panel Open
+
+        - **Goal**: 
+            - Modify the ==Triple Click Demo== Macro so that the a TextInput prompt opens instead of the hidden interface
+            - On a successful pin entry, then open the hidden Interface
+            - On a failed pin, re-open the TextInput prompt
+
+        - **Task**: 
+            
+            - Establish a `pinCode` object in the configuration section with a value of `1234`
+
+            ```javascript
+            const pinCode = 1234;
+            ```
+
+            - Modify the `openPanel()` function in the ==Triple Click Demo== Macro
+            - Your modification should:
+                - Replace xCommand UserInterface Extensions Panel Open call with xCommand UserInterface Message TextInput Display and apply the following parameters
+                    - Title: "Enter Pin for Access"
+                    - Text: "Enter a 4 digit pin below to access a hidden interface"
+                    - InputType: PIN
+                    - FeedbackId: protectedTripleClick
+                    - Duration: 30
+                - Note: you'll need that xCommand UserInterface Extensions Panel Open later in code, so best to copy it or comment it out
+
+                ??? example "View Before and After for the `openPanel()` function"
+
+                    === "Before Changes"
+
+                        ```javascript
+                        /*This function governs the panel logic*/
+                        async function openPanel() {
+                          clearTimeout(hiddenAccessHandler); //Clear the handler on each press
+                          hiddenAccessCount++; //Increase the count
+                          if (hiddenAccessCount == maxClicks) {
+                            console.warn({ Message: `Hidden Panel [${multiClickPanel}] revealed` })
+                            clearTimeout(hiddenAccessHandler); //Clear the the count threshold is met
+                            return xapi.Command.UserInterface.Extensions.Panel.Open({
+                              PanelId: multiClickPanel
+                            }); //Open the hidden panel
+                          }
+                          hiddenAccessHandler = setTimeout(function () {
+                            console.log({ Message: `Standard Panel [${singleClickPanel}] opened` })
+                            xapi.Command.UserInterface.Extensions.Panel.Open({
+                              PanelId: singleClickPanel
+                            }); //If the button is not pressed quickly enough, open the standard panel
+                            hiddenAccessCount = 0; //Reset the count
+                          }, delayBetweenClicks_ms)
+                        };
+                        ```
+
+                    === "After Changes"
+
+                        ```javascript
+                        /*This function governs the panel logic*/
+                        async function openPanel() {
+                          clearTimeout(hiddenAccessHandler);
+                          hiddenAccessCount++; 
+                          if (hiddenAccessCount == maxClicks) {
+                            console.warn({ Message: `Hidden Panel [${multiClickPanel}] Requested` }) // <-- Update our Console Log to Match
+                            clearTimeout(hiddenAccessHandler); 
+
+                            return xapi.Command.UserInterface.Message.TextInput.Display({ // <-- Adding our TextInput Prompt
+                              Title: 'Enter Pin for Access',
+                              Text: 'Enter a 4 digit pin below to access a hidden interface',
+                              InputType: 'Pin',
+                              FeedbackId: 'protectedTripleClick',
+                              Duration: 30
+                            })
+
+                            // return xapi.Command.UserInterface.Extensions.Panel.Open({
+                            //   PanelId: multiClickPanel
+                            // });
+                          }
+                          hiddenAccessHandler = setTimeout(function () {
+                            console.log({ Message: `Standard Panel [${singleClickPanel}] opened` })
+                            xapi.Command.UserInterface.Extensions.Panel.Open({
+                              PanelId: singleClickPanel
+                            }); //If the button is not pressed quickly enough, open the standard panel
+                            hiddenAccessCount = 0; //Reset the count
+                          }, delayBetweenClicks_ms)
+                        };
+                        ```
+                - We now need a Subscription to the TextInput Response in order to handle the user's pin submission
+
+                - Subscribe to ==xEvent UserInterface Message TextInput Response== using Macro Syntax
+                - Within the subscription
+                    - Use an `if` statement to check if an incoming TextInput response matches the FeedbackId we set in the TextInput command > =='protectedTripleClick'==
+                    - Use the `&&` operator within the same `if` statement to check if the Text matches the `pinCode` object configured in our Macro
+                        - If the FeedbackId and Text matches, open the hidden panel using xCommand UserInterface Extensions Panel Open
+                        - Else re-open the TextInput Prompt but change the title to "Incorrect Pin Entry, Try Again"
+
+                    ??? example "View Subscription"
+
+                        ``` javascript
+                        xapi.Event.UserInterface.Message.TextInput.Response.on(({FeedbackId, Text})=>{
+                          if (FeedbackId == 'protectedTripleClick' && Text == pinCode){
+                            console.warn({ Message: `Pin Passed, Hidden Panel [${multiClickPanel}] revealed` })
+                            xapi.Command.UserInterface.Extensions.Panel.Open({
+                              PanelId: multiClickPanel
+                            });
+                          } else {
+                            console.warn({ Message: `Re-prompting Pin Entry forHidden Panel [${multiClickPanel}]` });
+                            return xapi.Command.UserInterface.Message.TextInput.Display({
+                              Title: 'Incorrect Pin Entry, Try Again',
+                              Text: 'Enter a 4 digit pin below to access a hidden interface',
+                              InputType: 'Pin',
+                              FeedbackId: 'protectedTripleClick',
+                              Duration: 30
+                            })
+                          }
+                        })
+                        ```
+
+            - Once complete, Save and Activate this Macro
+                - It will spawn a UserInterface for your with a panel called User Facing Panel
+            - Click the Panel and it will open up an interface we want our average user to access
+            - Close the panel and then quickly click the panel 3 times to reveal open the TextInput Prompt
+                - Try entering the Correct pinCode (1234)
+                - Also try entering the wrong pin
+             
+        ??? success "Compare your Macro"
+
+            ```javascript
+            /********************************************************
+            Copyright (c) 2024 Cisco and/or its affiliates.
+            This software is licensed to you under the terms of the Cisco Sample
+            Code License, Version 1.1 (the "License"). You may obtain a copy of the
+            License at
+                          https://developer.cisco.com/docs/licenses
+            All use of the material herein must be in accordance with the terms of
+            the License. All rights not expressly granted by the License are
+            reserved. Unless required by applicable law or agreed to separately in
+            writing, software distributed under the License is distributed on an "AS
+            IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+            or implied.
+            *********************************************************/
+
+            /**
+             * Macro Author:              Robert(Bobby) McGonigle Jr
+             *                            Technical Marketing Engineering, Leader
+             *                            Cisco Systems
+             * 
+             * ---------------------------------------------------------------------
+             * Last Revised October 2024
+             */
+
+            import xapi from 'xapi';
+
+            /*Configuration Section*/
+
+            const pinCode = 1234;
+
+            const singleClickPanel = 'singleClickPanel' //Panel ID of the Standard Panel you want to open on a single press
+            const multiClickPanel = 'multiClickPanel'; //Panel ID of the Hidden Panel you'll reveal in X presses in quick succession
+            const userFacingPanel = 'userFacingPanel'; //Panel ID of the user facing panel
+
+            const delayBetweenClicks_ms = 250 //Delay Between Presses in Milliseconds to reveal the Hidden Panel
+            const maxClicks = 3 //Number of clicks needed to reveal the panel
+
+            /*Important objects, do not change*/
+
+            let hiddenAccessHandler; //Handles the timeout needed for panel logic
+            let hiddenAccessCount = 0; //let needed to track # of clicks presses
+
+
+            /*This function governs the panel logic*/
+            async function openPanel() {
+              clearTimeout(hiddenAccessHandler);
+              hiddenAccessCount++; 
+              if (hiddenAccessCount == maxClicks) {
+                console.warn({ Message: `Hidden Panel [${multiClickPanel}] Requested` }) // <-- Update our Console Log to Match
+                clearTimeout(hiddenAccessHandler); 
+
+                return xapi.Command.UserInterface.Message.TextInput.Display({ // <-- Adding our TextInput Prompt
+                  Title: 'Enter Pin for Access',
+                  Text: 'Enter a 4 digit pin below to access a hidden interface',
+                  InputType: 'Pin',
+                  FeedbackId: 'protectedTripleClick',
+                  Duration: 30
+                })
+
+                // return xapi.Command.UserInterface.Extensions.Panel.Open({
+                //   PanelId: multiClickPanel
+                // });
+              }
+              hiddenAccessHandler = setTimeout(function () {
+                console.log({ Message: `Standard Panel [${singleClickPanel}] opened` })
+                xapi.Command.UserInterface.Extensions.Panel.Open({
+                  PanelId: singleClickPanel
+                }); //If the button is not pressed quickly enough, open the standard panel
+                hiddenAccessCount = 0; //Reset the count
+              }, delayBetweenClicks_ms)
+            };
+
+            xapi.Event.UserInterface.Message.TextInput.Response.on(({FeedbackId, Text})=>{
+              if (FeedbackId == 'protectedTripleClick' && Text == pinCode){
+                console.warn({ Message: `Pin Passed, Hidden Panel [${multiClickPanel}] revealed` })
+                xapi.Command.UserInterface.Extensions.Panel.Open({
+                  PanelId: multiClickPanel
+                });
+              } else {
+                console.warn({ Message: `Re-prompting Pin Entry forHidden Panel [${multiClickPanel}]` });
+                return xapi.Command.UserInterface.Message.TextInput.Display({
+                  Title: 'Incorrect Pin Entry, Try Again',
+                  Text: 'Enter a 4 digit pin below to access a hidden interface',
+                  InputType: 'Pin',
+                  FeedbackId: 'protectedTripleClick',
+                  Duration: 30
+                })
+              }
+            })
+
+
+            /*Normal Event logic*/
+            xapi.Event.UserInterface.Extensions.Panel.Clicked.on(event => {
+              switch (event.PanelId) {
+                case userFacingPanel: //Run open panel logic when the User Facing panel is pressed// This can be any action button
+                  openPanel()
+                  break;
+                default:
+                  break;
+              }
+            });
+
+            xapi.Event.UserInterface.Extensions.Widget.Action.on(event => {
+              switch (event.WidgetId) {
+                case 'visiblePanel_2':
+                  xapi.Command.UserInterface.Message.Prompt.Display({
+                    Title: 'You did it!',
+                    Text: 'You pressed a button<p>Now, find the hidden button to press',
+                    Duration: 5,
+                    "Option.1": 'Dismiss'
+                  })
+                  break;
+                case 'hiddenPanel_2':
+                  xapi.Command.UserInterface.Message.Prompt.Display({
+                    Title: 'You did it!',
+                    Text: 'You pressed the HIDDEN button<p>Well, that\'s about it, happy coding 😊',
+                    Duration: 5,
+                    "Option.1": 'Dismiss'
+                  })
+                  break;
+                default:
+                  break;
+              }
+            })
+
+            async function buildPanels() {
+
+              const userFacingXML = `<Extensions>
+              <Panel>
+                <Origin>local</Origin>
+                <Location>HomeScreenAndCallControls</Location>
+                <Icon>Concierge</Icon>
+                <Color>#CF7900</Color>
+                <Name>User Facing Panel</Name>
+                <ActivityType>Custom</ActivityType>
+              </Panel>
+            </Extensions>
+            `;
+
+              const singleClickXML = `<Extensions>
+              <Panel>
+                <Origin>local</Origin>
+                <Location>Hidden</Location>
+                <Icon>Input</Icon>
+                <Name>Visible Panel</Name>
+                <ActivityType>Custom</ActivityType>
+                <Page>
+                  <Name>Normal Visible Panel</Name>
+                  <Row>
+                    <Name>Row</Name>
+                    <Widget>
+                      <WidgetId>visiblePanel_1</WidgetId>
+                      <Name>Nothing to hide here 😊</Name>
+                      <Type>Text</Type>
+                      <Options>size=4;fontSize=normal;align=center</Options>
+                    </Widget>
+                  </Row>
+                  <Row>
+                    <Name>Row</Name>
+                    <Widget>
+                      <WidgetId>visiblePanel_2</WidgetId>
+                      <Name>Oh Look, A Button 🎉</Name>
+                      <Type>Button</Type>
+                      <Options>size=4</Options>
+                    </Widget>
+                  </Row>
+                  <Row>
+                    <Name>Row</Name>
+                    <Widget>
+                      <WidgetId>visiblePanel_3</WidgetId>
+                      <Name>Exit this panel and tap it 3 times in quick succession to reveal a hidden panel</Name>
+                      <Type>Text</Type>
+                      <Options>size=4;fontSize=normal;align=center</Options>
+                    </Widget>
+                  </Row>
+                  <Row>
+                    <Name>Row</Name>
+                    <Widget>
+                      <WidgetId>visiblePanel_4</WidgetId>
+                      <Name>Feel free to use this example to build tools that don't always need to be visible</Name>
+                      <Type>Text</Type>
+                      <Options>size=4;fontSize=normal;align=center</Options>
+                    </Widget>
+                  </Row>
+                  <Options>hideRowNames=1</Options>
+                </Page>
+              </Panel>
+            </Extensions>
+            `;
+
+              const multiClickXML = `<Extensions>
+              <Panel>
+                <Origin>local</Origin>
+                <Location>Hidden</Location>
+                <Icon>Sliders</Icon>
+                <Name>Hidden Panel</Name>
+                <ActivityType>Custom</ActivityType>
+                <Page>
+                  <Name>Super Secret Panel</Name>
+                  <Row>
+                    <Name>Row</Name>
+                    <Widget>
+                      <WidgetId>hiddenPanel_1</WidgetId>
+                      <Name>Tuck away tools for quick changes to your system on the fly</Name>
+                      <Type>Text</Type>
+                      <Options>size=4;fontSize=normal;align=center</Options>
+                    </Widget>
+                  </Row>
+                  <Row>
+                    <Name>Row</Name>
+                    <Widget>
+                      <WidgetId>hiddenPanel_2</WidgetId>
+                      <Name>WHAT?!?! Another Button!!!</Name>
+                      <Type>Button</Type>
+                      <Options>size=4</Options>
+                    </Widget>
+                  </Row>
+                  <Options>hideRowNames=1</Options>
+                </Page>
+              </Panel>
+            </Extensions>
+            `;
+
+              xapi.Command.UserInterface.Extensions.Panel.Save({ PanelId: userFacingPanel }, userFacingXML)
+
+              xapi.Command.UserInterface.Extensions.Panel.Save({ PanelId: singleClickPanel }, singleClickXML)
+
+              xapi.Command.UserInterface.Extensions.Panel.Save({ PanelId: multiClickPanel }, multiClickXML)
+            }
+
+            buildPanels();
+            ```
+
 
 <!-- ??? lesson "Lesson: Pressed and released modal" -->
 
