@@ -1062,7 +1062,7 @@
             ```
 
 
-??? lesson "Expanding Native Share Sources"
+??? lesson "Expanding Native Share Sources [Under Construction]"
 
     !!! note
 
@@ -1073,3 +1073,33 @@
         We do have tools to allow you to expand sources in the Codec's Native share tray and produce events for your Automation to relay on in order to tell that HDMI switchers/matrix to switch
 
         This will give a consistent look and feel across all rooms while enabling expansion of your video inputs
+
+    For this lesson, we ask that you re-connect to the endpoint via SSH
+
+    - **xAPI(s)**:
+        - xCommand UserInterface Presentation ExternalSource Add
+        - xCommand UserInterface Presentation ExternalSource List
+        - xCommand UserInterface Presentation ExternalSource Remove
+        - xCommand UserInterface Presentation ExternalSource RemoveAll
+        - xCommand UserInterface Presentation ExternalSource State Set
+        - xEvent UserInterface Presentation ExternalSource Selected
+
+    - **Goal**:
+        - Use the xAPIs above to expand our HDMI input source from 1 to 4
+        - Set their states and subscribe to when they are selected
+
+    - **Task**:
+        - First, select the Share Tray to your Codec and review the available sources
+        - Log into your device via SSH
+        - Run the following commands
+        ``` shell
+        xCommand UserInterface Presentation ExternalSource RemoveAll
+        xCommand UserInterface Presentation ExternalSource Add ConnectorId: 3 Name: "External 1" SourceIdentifier: ext_1 Type: PC
+        xCommand UserInterface Presentation ExternalSource State Set SourceIdentifier: ext_1 State: Ready
+        xCommand UserInterface Presentation ExternalSource Add ConnectorId: 3 Name: "External 2" SourceIdentifier: ext_2 Type: PC
+        xCommand UserInterface Presentation ExternalSource State Set SourceIdentifier: ext_2 State: NotReady
+        xCommand UserInterface Presentation ExternalSource Add ConnectorId: 3 Name: "External 3" SourceIdentifier: ext_3 Type: PC
+        xCommand UserInterface Presentation ExternalSource State Set SourceIdentifier: ext_3 State: Error ErrorReason: "HDMI Switcher On Vacation"
+        xCommand UserInterface Presentation ExternalSource Add ConnectorId: 3 Name: "External 4" SourceIdentifier: ext_4 Type: PC
+        xCommand UserInterface Presentation ExternalSource State Set SourceIdentifier: ext_4 State: Ready
+        ```
