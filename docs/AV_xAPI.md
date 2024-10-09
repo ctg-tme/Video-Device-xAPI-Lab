@@ -6,12 +6,12 @@
 
     Click each lesson below to expand them, and follow any tasks they introduce
 
-<!-- !!! important "Download AV-MacroPak"
+!!! important "Download AV-MacroPak"
 
     <figure markdown="span">
-        [![AV-MacroPak](./assets/general/cisco-logo-transparent.png){ width="200" }](https://raw.githubusercontent.com/WebexCC-SA/LAB-1451/main/docs/assets/downloadable_resources/MacroPak.zip)
+        [![AV-MacroPak](./assets/general/cisco-logo-transparent.png){ width="200" }](https://github.com/ctg-tme/Video-Device-xAPI-Lab/raw/main/docs/assets/downloadable_resources/AV-MacroPak.zip)
       <figcaption>AV-MacroPak</figcaption>
-    </figure> -->
+    </figure>
 
 
 ??? lesson "Lesson: Video Compositing"
@@ -1060,5 +1060,3 @@
               }
             })
             ```
-
-<!-- ??? lesson "Lesson: Bad Macro, how to fix" -->
