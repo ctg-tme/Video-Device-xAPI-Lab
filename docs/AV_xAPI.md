@@ -235,7 +235,7 @@
         - Define and Declare an `init()` function
             - This function should set the following xAPIs and Values using Macro Syntax
                 - xConfiguration Peripherals InputDevice Mode: On
-                - xCommand Video Matrix Assign ConnectorId: 1 Output: 2
+                - xCommand Video Matrix Assign SourceId: 1 Output: 2
             
             ??? example "View `init()` function"
 
@@ -243,7 +243,7 @@
                 function init(){
                   xapi.Config.Peripherals.InputDevice.Mode.set('On');
                   xapi.Command.Video.Matrix.Assign({
-                    ConnectorId: 1,
+                    SourceId: 1,
                     Output: 2
                   });
                 }
