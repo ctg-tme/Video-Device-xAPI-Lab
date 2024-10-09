@@ -6,6 +6,13 @@
 
     Click each lesson below to expand them, and follow any tasks they introduce
 
+<!-- !!! important "Download AV-MacroPak"
+
+    <figure markdown="span">
+        [![AV-MacroPak](./assets/general/cisco-logo-transparent.png){ width="200" }](https://raw.githubusercontent.com/WebexCC-SA/LAB-1451/main/docs/assets/downloadable_resources/MacroPak.zip)
+      <figcaption>AV-MacroPak</figcaption>
+    </figure> -->
+
 
 ??? lesson "Lesson: Video Compositing"
 
@@ -286,13 +293,111 @@
             
             - Once complete, save your macro, make sure it's active and try out the Presentation Clicker
 
+    ??? success "Compare your Macro"
 
-??? lesson "Lesson: WebView OSD and Controller" // Build from Scratch
+        ```javascript
+        import xapi from 'xapi';
 
-??? lesson "Lesson: Room Analytics" Pre-Made
+        function init() {
+          xapi.Config.Peripherals.InputDevice.Mode.set('On');
+          xapi.Command.Video.Matrix.Assign({
+            ConnectorId: 1,
+            Output: 2
+          });
+        }
 
-??? lesson "Lesson: Triple Click Example" // Premade
+        init();
 
-??? lesson "Lesson: Pressed and released modal" Build from Scratch
+        xapi.Event.UserInterface.InputDevice.Key.Action.on(({ Code, Key, Type }) => {
+          console.log(`Key Pressed: [${Key}]`)
+          switch (Key) {
+            case 'KEY_PAGEUP': //Left Arrow
+              xapi.Command.Video.Input.SetMainVideoSource({ ConnectorId: [1] })
+              break;
+            case 'KEY_PAGEDOWN': // Right Arrow
+              xapi.Command.Video.Input.SetMainVideoSource({ ConnectorId: [1, 2], Layout: 'Equal' })
+              break;
+            case 'KEY_B': // Up Arrow
+              xapi.Command.Audio.Volume.Increase()
+              break;
+            case 'KEY_LEFTSHIFT': case 'KEY_F5': // Down Arrow
+              xapi.Command.Audio.Volume.Decrease()
+              break;
+          }
+        })
+        ```
 
-??? lesson "Lesson: Bad Macro, how to fix" // Premade - But fix it
+??? lesson "Lesson: WebView OSD and Controller"
+
+??? lesson "Lesson: Room Analytics"
+
+    !!! note
+
+        Let's take a brief break from Macros and install a Web Widget :smiley:
+
+        Web Widgets are a great way to add signage to your Device running in RoomOS mode
+
+        It's Web Content that rests in a non-interactive Modal Window on the OSD of your Codec
+
+        Great for Digital Signage, Company Wide Communication, Stock Tickers, anything that really enhances your User's Experience
+
+    We'll be using WebContent curated by our WXSD Sales Team. They built a Web Widget that leverages the front end jsxapi module that sockets into your Video Endpoint and Pulls the Analytics Information available on the Codec.
+
+    ??? curious "What's the jsxapi module?"
+
+        The jsxapi module is a tool that's hosted external to the codec that can facilitate either an SSH or a WebSocket connection to the endpoint. The syntax is largely similar to Macro syntax, except with a few more steps to establish the socket
+
+        The advantage of the jsxapi is you can embed it into Web Applications as well as leverage other services not accessible on the Codec
+
+        <a class="md-button md-button--primary" href="https://roomos.cisco.com/doc/TechDocs/JSXAPIIntro" target="_blank" >
+          Learn more about the jsxapi <i class="fa-solid fa-square-up-right"></i>
+        </a>
+
+    - **xAPI(s)**:
+        - xConfiguration WebEngine Mode: On
+        - xConfiguration WebEngine Features AllowDeviceCertificate: True
+        - xConfiguration NetworkServices CommonProxy: Enabled
+
+    - **Task**: 
+        - Navigate to the Configuration section of the Codec's WebUI
+        - Set the Above xAPI references to the provided values
+            - Note, CommonProxy is ONLY available via the WebUI
+        
+        - Navigate to the UI Extensions Editor
+
+        - Select ==New==
+        - Select WebWidget
+        - Assign the following URL to the WebWidget
+
+        ```
+        https://wxsd-sales.github.io/analytics-web-widget/widget.html?username=ENTER_USERNAME_HERE&password=ENTER_PASSWORD_HERE&ipAddress=ENTER_IP_HERE
+        ```
+
+        !!! note
+
+            The URL above has 3 URL parameters you MUST assign
+
+            - username=
+            - password=
+            - ipAddress=
+
+            Be sure to provide the Username, Password and Ip Address of your codec in these fields. The jsxapi module within the Web App will use this information to form a socket against your endpoint
+        
+        - Save your UI Extension, you should now see a Web Widget on the OSD of your Device
+
+        <a class="md-button md-button--primary" href="https://github.com/wxsd-sales/analytics-web-widget" target="_blank" >
+          Learn more about WXSD's Analytics Web Widget<i class="fa-solid fa-square-up-right"></i>
+        </a>
+
+    ??? success "Compare your OSD"
+
+        <figure markdown="span">
+          ![Web Widget](./assets/general/analytcs_web_widget.png){ width="600" }
+          <figcaption>Web Widget</figcaption>
+        </figure>
+
+??? lesson "Lesson: Triple Click Example"
+
+<!-- ??? lesson "Lesson: Pressed and released modal" -->
+
+<!-- ??? lesson "Lesson: Bad Macro, how to fix" -->
