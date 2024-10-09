@@ -807,6 +807,258 @@
             ```
 
 
-<!-- ??? lesson "Lesson: Pressed and released modal" -->
+??? lesson "Lesson: Pressed and Released Use Cases"
+
+    !!! Note
+
+        Unlike panels, many widgets fire multiple events. These events may seem a bit odd, as they can seam to fire at the same time, but it could be that you're interacting with the Widget a bit too quickly.
+
+        We can leverage these unique events from each widget to craft a more refined User Experience in our customization
+
+        Below is a list of all the Widgets we have today and which events they can fire
+
+        !!! experiment "Click on each table below to review each Widget"
+
+            === "Toggle"
+
+                !!! gif inline end
+
+                    <figure markdown="span">
+                        ![Toggle Action](./assets/general/UI_Extension_Gifs/toggle.gif)
+                        <figcaption>Toggle Action</figcaption>
+                    </figure>
+
+                |Key|Value|
+                |:--|:----|
+                |WidgetId|`Assigned by the Developer on Widget Instantiation`|
+                |Type| `changed`|
+                |Value| `on` or `off` |
+
+            === "Slider"
+
+                !!! gif inline end
+
+                    <figure markdown="span">
+                        ![Slider Action](./assets/general/UI_Extension_Gifs/slider.gif)
+                        <figcaption>Slider Action</figcaption>
+                    </figure>
+
+                |Key|Value|
+                |:--|:----|
+                |WidgetId|`Assigned by the Developer on Widget Instantiation`|
+                |Type|`pressed`, `released`, or `changed`|
+                |Value| `Integer between 0 and 255` |
+
+            === "Button"
+
+                !!! gif inline end
+
+                    <figure markdown="span">
+                        ![Button Action](./assets/general/UI_Extension_Gifs/button.gif)
+                        <figcaption>Button Action</figcaption>
+                    </figure>
+
+                |Key|Value|
+                |:--|:----|
+                |WidgetId|`Assigned by the Developer on Widget Instantiation`|
+                |Type|`pressed`, `released`, or `clicked`|
+                |Value| N/A |
+
+            === "GroupButton"
+
+                !!! gif inline end
+
+                    <figure markdown="span">
+                        ![Group Button Action](./assets/general/UI_Extension_Gifs/groupButton.gif)
+                        <figcaption>Group Button Action</figcaption>
+                    </figure>
+
+                |Key|Value|
+                |:--|:----|
+                |WidgetId|`Assigned by the Developer on Widget Instantiation`|
+                |Type|`pressed`, `released`|
+                |Value| `Assigned by the Developer on Widget Instantiation` |
+
+            === "Icon Button"
+
+                !!! gif inline end
+
+                    <figure markdown="span">
+                        ![Icon Button Icons](./assets/general/UI_Extension_Gifs/iconButton.gif)
+                        <figcaption>Icon Button Icons</figcaption>
+                    </figure>
+
+                |Key|Value|
+                |:--|:----|
+                |WidgetId|`Assigned by the Developer on Widget Instantiation`|
+                |Type|`pressed`, `released`, or `clicked`|
+                |Value| N/A |
+
+            === "Spinner"
+
+                !!! gif inline end
+
+                    <figure markdown="span">
+                        ![Spinner Icons](./assets/general/UI_Extension_Gifs/spinner.gif)
+                        <figcaption>Spinner Icons</figcaption>
+                    </figure>
+
+                |Key|Value|
+                |:--|:----|
+                |WidgetId|`Assigned by the Developer on Widget Instantiation`|
+                |Type|`pressed`, `released`, or `clicked`|
+                |Value| `increment` or `decrement` |
+
+            === "TextBox"
+
+                !!! failure "Does not fire events"
+
+            === "Directional Pad"
+
+                !!! gif inline end
+
+                    <figure markdown="span">
+                        ![Directional Pad Action](./assets/general/UI_Extension_Gifs/controlWheel.gif)
+                        <figcaption>Directional Pad Action</figcaption>
+                    </figure>
+
+                |Key|Value|
+                |:--|:----|
+                |WidgetId|`Assigned by the Developer on Widget Instantiation`|
+                |Type|`pressed`, `released`, or `clicked`|
+                |Value| `up`, `down`, `left`, `right`, `center` |
+
+            === "Spacer"
+
+                !!! failure "Does not fire events"
+
+    - **xAPI(s)**: 
+        - xEvent UserInterface Extensions Widget Action
+        - xCommand UserInterface Message Rating Display
+        - xCommand UserInterface Extensions Panel Open
+        - xCommand Audio Sound Play
+
+    - **Goal**: 
+        - Like we did with Panels, we can open a hidden interface based on certain events coming from a widget
+
+        - Leverage the Pressed and Released types of a Widget Button's events in 2 different ways
+        - Pressed: When held for 3 seconds, open up a hidden panel
+        - Released: If released before the 3 second mark, open up a Message Rating prompt
+
+    - **Task**: 
+
+        - Install the ==MessageRating.xml== UI extension in the UI Extensions Editor
+        - Install the ==HiddenMenu.xml== UI extension in the UI Extensions Editor
+
+        - Create a new Macro called ==Pressed and Released Demo==, save and activate it
+
+        - In this macro do the following
+            - define an object called `pressHandler` and assign the value of `''`;
+            - define an object called `showHidden` and assign the value of `false`;
+                - 
+
+            ``` javascript
+            let pressHandler = '';
+            let showHidden = false;
+            ```
+
+            - Subscribe to xEvent UserInterface Extensions Widget Action
+            - Within this Subscription:
+                - Use an `if` statement to see if the WidgetId matches "ratingSystem"
+                - Use an `if` statement to compare the incoming Widget Type to the value `pressed`
+                    - Within this `if` statement, assign ES6 JS's ==setTimeout()== function to the `pressHandler` object
+                    - In the first parameter of the ==setTimeout()==, assign a short-hand function  and define the following in this short-hand function
+                        - xCommand Audio Sound Play Sound: Binding
+                        - Update `showHidden = true;`
+
+                    - In the first parameter of the ==setTimeout()==, assign the value of `3000` (milliseconds)
+                - Use an `if` statement to compare the incoming Widget Type to the value `released`
+                    - Within this `if` statement, run the ES6 JS function ==clearTimeout()== and pass `pressHandler` object as it's only parameter
+
+                    - Use an `if` statement to check the value of the `showHidden` object
+                        - If true, do the following
+                            - Run xCommand UserInterface Extensions Panel Open with the following parameter
+                                - PanelId: hiddenMenu
+                            - Update `showHidden = false;`
+                        - If false, do the following
+                            - Run xCommand UserInterface Message Rating Display with the following Parameters
+                                - Title: "Rate this Experience"
+                                - Text: "1 being the lowest, 5 being the highest"
+                                - Duration: 30
+
+            ??? example "View Subscription"
+
+                ``` javascript
+                xapi.Event.UserInterface.Extensions.Widget.Action.on(({ WidgetId, Type, Value }) => {
+                  if (WidgetId == 'ratingSystem') {
+                    if (Type == 'pressed') {
+                      pressHandler = setTimeout(() => {
+                        showHidden = true;
+                        xapi.Command.Audio.Sound.Play({ Sound: 'Binding' });
+                        return;
+                      }, 3000);
+                    };
+
+                    if (Type == 'released') {
+                      clearInterval(pressHandler);
+                      if (showHidden) {
+                        showHidden = false;
+                        xapi.Command.UserInterface.Extensions.Panel.Open({ PanelId: 'hiddenMenu' });
+                      } else {
+                        xapi.Command.UserInterface.Message.Rating.Display({
+                          Title: 'Rate this Experience',
+                          Text: '1 being the lowest, 5 being the highest',
+                          Duration: 30
+                        });
+                      }
+                    }
+                  }
+                })
+                ```
+
+            - Once complete, Save and Activate this Macro
+            - Open the ==Pressed and Released== Demo Panel
+                - Click the {++Start Survey++} Button
+                    - You should see the Rating Display with a selection of 1 to 5 start
+                - Then tress and hold the Start Survey {++Start Survey++} for 3 seconds
+                    - You should hear a faint **beep beep**
+                    - That sound indicates you held the button long enough and can now release
+                        - You should see a Secret Rating System contained in a Panel using a Group Button
+
+        ??? "Compare your Macro"
+
+            ```javascript
+            import xapi from 'xapi';
+
+            let pressHandler = '';
+
+            let showHidden = false;
+
+            xapi.Event.UserInterface.Extensions.Widget.Action.on(({ WidgetId, Type, Value }) => {
+              if (WidgetId == 'ratingSystem') {
+                if (Type == 'pressed') {
+                  pressHandler = setTimeout(() => {
+                    showHidden = true;
+                    xapi.Command.Audio.Sound.Play({ Sound: 'Binding' });
+                    return;
+                  }, 3000);
+                };
+
+                if (Type == 'released') {
+                  clearInterval(pressHandler);
+                  if (showHidden) {
+                    showHidden = false;
+                    xapi.Command.UserInterface.Extensions.Panel.Open({ PanelId: 'hiddenMenu' });
+                  } else {
+                    xapi.Command.UserInterface.Message.Rating.Display({
+                      Title: 'Rate this Experience',
+                      Text: '1 being the lowest, 5 being the highest',
+                      Duration: 30
+                    });
+                  }
+                }
+              }
+            })
+            ```
 
 <!-- ??? lesson "Lesson: Bad Macro, how to fix" -->
