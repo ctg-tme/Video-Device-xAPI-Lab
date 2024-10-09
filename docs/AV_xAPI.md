@@ -2,7 +2,7 @@
 
     In this section we'll review a few of the AV concepts that are available on Cisco Video Hardware
 
-    Keep in mind, these are high level examples and we have hundreds of API, don't let these be the end of the road in your Journey, it's only the top of the Iceburg. 
+    Keep in mind, these are high level examples and we have hundreds of APIs, don't let these be the end of the road in your Journey, it's only the tip of the Iceburg. 
 
     Click each lesson below to expand them, and follow any tasks they introduce
 
@@ -86,7 +86,7 @@
         - Install the ==Video Compositing Demo== Macro from the AV-MacroPak.zip file
         - Save and Activate this Macro
             - It will spawn a UserInterface for your with all your available sources
-        - Goes through each Page in this macro and build new compositions on the fly using the various controls
+        - Go through each Page in this macro and build new compositions on the fly using the various controls
         
         ??? tip "Inspect the Macro"
 
@@ -337,7 +337,7 @@
 
         Simply put, they are Web Pages you can access via your device
 
-    We'll be covering how to open a WebView in the "Building Room Documentation Macr", so for the purposes of this lesson, we want you to check out a pretty impressive macro and web application the Cisco WXSD Sales team has put together that utilizes WebViews simultaneously on the OSD and Touch Controller
+    We'll be covering how to open a WebView in the "Building Room Documentation Macro", so for the purposes of this lesson, we want you to check out a pretty impressive macro and web application the Cisco WXSD Sales team has put together that utilizes WebViews simultaneously on the OSD and Touch Controller
 
     - **Task**:
 
@@ -423,7 +423,7 @@
 
         At times, we may want to build in tools that should only be available to super users or device admins in a space
 
-        It's common to see hidden interfaces in the wild that allow users to make changes to there space that the everyday user need not interact with, such as modifying a gain structure for Microphones or Re-Routing Displays
+        It's common to see hidden interfaces in the wild that allow users to make changes to their space that the everyday user need not interact with, such as modifying a gain structure for Microphones or Re-Routing Displays
 
         But at face value, our UI Extensions don't offer an obvious solution to that need when you first dive into them
 
