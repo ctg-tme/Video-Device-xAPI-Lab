@@ -116,13 +116,9 @@
         <script>
             document.getElementById('stringifyXmlButton').onclick = function() {
                 const inputText = document.getElementById('xmlInput').value;
-                const stringifiedXml = inputText
-                    .replace(/&/g, '&amp;') // Replace & with &amp;
-                    .replace(/</g, '&lt;')  // Replace < with &lt;
-                    .replace(/>/g, '&gt;')  // Replace > with &gt;
-                    .replace(/'/g, '&apos;') // Replace ' with &apos;
-                    .replace(/"/g, '&quot;') // Replace " with &quot;
-                    .trim(); // Replace < and > with their HTML entities
+                console.log(inputText)
+                const stringifiedXml = inputText.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/'/g, '&apos;').replace(/"/g, '&quot;').trim();
+                console.log(stringifiedXml)
                 document.getElementById('xmlOutputText').textContent = stringifiedXml; // Update only the text span
             };
         </script>

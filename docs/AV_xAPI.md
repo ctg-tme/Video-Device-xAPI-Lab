@@ -1060,3 +1060,16 @@
               }
             })
             ```
+
+
+??? lesson "Expanding Native Share Sources"
+
+    !!! note
+
+        At times, it's necessary to expand the number of video inputs available on a Codec using HDMI switchers/matrices
+
+        Building a custom panel to allow a user to select these external sources is entirely possible, but it clutters up the UserInterface
+
+        We do have tools to allow you to expand sources in the Codec's Native share tray and produce events for your Automation to relay on in order to tell that HDMI switchers/matrix to switch
+
+        This will give a consistent look and feel across all rooms while enabling expansion of your video inputs
