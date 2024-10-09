@@ -329,6 +329,27 @@
 
 ??? lesson "Lesson: WebView OSD and Controller"
 
+    !!! note 
+
+        All current Cisco Devices have a feature called the ==WebEngine==
+
+        This WebEngine allows you to setup WebApps, WebViews, WebWidgets and Persistent WebApps across varying products
+
+        Simply put, they are Web Pages you can access via your device
+
+    We'll be covering how to open a WebView in the "Building Room Documentation Macr", so for the purposes of this lesson, we want you to check out a pretty impressive macro and web application the Cisco WXSD Sales team has put together that utilizes WebViews simultaneously on the OSD and Touch Controller
+
+    - **Task**:
+
+        - Install the ==webview-websocket== Macro from the AV-MacroPak
+        - Save and Activate the macro
+        - It will spawn a panel for you called WebSocket Demos
+        - Open this interface and try each of the demos
+
+    <a class="md-button md-button--primary" href="https://github.com/wxsd-sales/analytics-web-widget" target="_blank" >
+        Learn more about WXSD's webview-websocket Macro<i class="fa-solid fa-square-up-right"></i>
+    </a>
+
 ??? lesson "Lesson: Room Analytics"
 
     !!! note
