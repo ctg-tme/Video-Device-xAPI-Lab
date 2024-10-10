@@ -1,0 +1,54 @@
+<Extensions>
+  <Version>1.11</Version>
+  <Panel>
+    <Order>12</Order>
+    <PanelId>hiddenMenu</PanelId>
+    <Location>Hidden</Location>
+    <Icon>Lightbulb</Icon>
+    <Name>Pressed and Released Demo Hidden</Name>
+    <ActivityType>Custom</ActivityType>
+    <Page>
+      <Name>Secret Rating System</Name>
+      <Row>
+        <Name>Row</Name>
+        <Widget>
+          <WidgetId>secretText</WidgetId>
+          <Name>Ok, tell us the truth, how would you rate this experience. 1 being the lowest, 5 being the highest</Name>
+          <Type>Text</Type>
+          <Options>size=4;fontSize=normal;align=center</Options>
+        </Widget>
+      </Row>
+      <Row>
+        <Name>Row</Name>
+        <Widget>
+          <WidgetId>secretRatingSystem</WidgetId>
+          <Type>GroupButton</Type>
+          <Options>size=4;columns=3</Options>
+          <ValueSpace>
+            <Value>
+              <Key>5</Key>
+              <Name>5</Name>
+            </Value>
+            <Value>
+              <Key>5</Key>
+              <Name>5</Name>
+            </Value>
+            <Value>
+              <Key>5</Key>
+              <Name>5</Name>
+            </Value>
+            <Value>
+              <Key>5</Key>
+              <Name>5</Name>
+            </Value>
+            <Value>
+              <Key>5</Key>
+              <Name>5</Name>
+            </Value>
+          </ValueSpace>
+        </Widget>
+      </Row>
+      <Options>hideRowNames=1</Options>
+    </Page>
+  </Panel>
+</Extensions>
