@@ -1103,3 +1103,122 @@
         xCommand UserInterface Presentation ExternalSource Add ConnectorId: 3 Name: "External 4" SourceIdentifier: ext_4 Type: PC
         xCommand UserInterface Presentation ExternalSource State Set SourceIdentifier: ext_4 State: Ready
         ```
+
+??? tool "Shell to XML Conversion Macro"
+
+    ```javascript
+    const shellPath = 'xCommand Message Send';
+
+    function convertToXML(data) {
+      const filterData = structureXapi(data)
+      switch (filterData.Type.toLowerCase()) {
+        case 'xcommand': case 'xcom':
+          return formXmlPath(filterData, 'set');
+        case 'xconfiguration': case 'xconfig':
+          switch (filterData.SubType) {
+            case 'get':
+              return formXmlPath(filterData, 'get');
+            case 'set':
+              return formXmlPath(filterData, 'set');
+            default:
+              break;
+          }
+          break;
+        case 'xstat': case 'xstatus':
+          switch (filterData.SubType) {
+            case 'get':
+              return formXmlPath(filterData, 'get');
+            default:
+              break;
+          }
+          break;
+        default:
+          break;
+      }
+    }
+
+    function formXmlPath(data, type = 'set') {
+      if (type == 'set') {
+        let openXML = ``;
+        let closeXML = ``;
+        let paramXML = ``;
+
+        for (let i = 0; i < data.xApi.length; i++) {
+          openXML = openXML + `<${data.xApi[i]}>`
+          closeXML = closeXML + `</${data.xApi[data.xApi.length - (1 + i)]}>`
+        }
+
+        if (Object.keys(data.Parameters).length > 0) {
+          const objects = Object.getOwnPropertyNames(data.Parameters)
+          objects.forEach(element => {
+            paramXML = paramXML + `<${element}>${data.Parameters[element]}</${element}>`
+          })
+        }
+
+        let XmlPath = `<${data.Type.replace('x', '')}>${openXML}${paramXML}${closeXML}</${data.Type.replace('x', '')}>`
+        return XmlPath
+      } else if (type == 'get') {
+        let path = `${data.Type.replace('x', '')}/`
+        for (let i = 0; i < data.xApi.length; i++) {
+          if (i == (data.xApi.length - 1)) {
+            path = path + `${data.xApi[i]}`
+          } else {
+            path = path + `${data.xApi[i]}/`
+          }
+        }
+        return path
+      }
+    }
+
+    function determineType(dt) { //Basically if you have a : colon, you've provided me data, else you're requesting it
+      let count = 0
+      for (let i = 0; i < dt.length; i++) {
+        if (dt[i].includes(':')) {
+          count++
+        }
+      }
+      if (count > 0) {
+        return 'set'
+      } else {
+        return 'get'
+      }
+    }
+
+    function structureXapi(arr) {
+      var type = arr.split(' ')[0]                          //First item in the string is the type
+      var data = arr.split(' ')                             //Then we gather all values for later processing. We split based on the [space]s in the string
+      var subType = determineType(data)                     //Checks to see if any values contains a : colon, which indicates a set vs a get
+      data.shift()                                          //Remove the type from the data before we filter through it
+      var dots = []
+      var params = {}
+      var paramStartFlag = false                            // False until first parameter pours in
+      var paramValueFlag = false                            // False until next parameter shows
+      for (let i = 0; i < data.length; i++) {
+        if (!paramValueFlag) {
+          if (data[i].includes(':')) {                      // ':' all parameters proceed with a colon, use this to determine which is a parameter and which is a value
+            paramStartFlag = true;                          // Stays true until done
+            paramValueFlag = true;                          // Switch to true to handle value capture logic
+            params[data[i].slice(0, -1)] = data[i + 1]      // the value is one position ahead of the parameter
+          } else if (paramStartFlag) {
+            if ((data[i].includes(':'))) {                  //If we see the next parameter via a colon, we set the value flag back to false
+              paramValueFlag = false
+            } else {                                        // Else we concatenate the next value, adding back in the space we split out above
+              const paramList = Object.getOwnPropertyNames(params)
+              const lastParam = paramList[paramList.length - 1]
+              params[lastParam] = params[lastParam] + ' ' + data[i]
+            }
+          }
+          else {
+            dots.push(data[i])                              // Both flags are false, so we're still gathering the xApi path from the data array
+          }
+        } else {
+          paramValueFlag = false
+        }
+      }
+      const result = { Type: type, SubType: subType, xApi: dots, Parameters: params }
+
+      return result
+    }
+
+    console.log('XML String:', convertToXML( shellPath))
+    ```
