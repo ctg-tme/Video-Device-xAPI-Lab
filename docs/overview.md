@@ -6,6 +6,10 @@ In this lab, we'll cover Cisco's Video Device xAPI, how to access this xAPI on r
 
 We'll take this a step further and show you how to deploy this new solution using our Webex Control Hub cloud management service
 
+!!! important
+
+    This Lab is under development, understand some pieces may be incomplete, If you run into any issues through the lab, please make use of the official xAPI guides linked in the Resources Tab
+
 ## Learning Objectives
 
 Upon successful completion of this lab, you will be able to:

@@ -98,7 +98,7 @@ nav:
       - Lab&colon; Deploying your Customization: wx1_1451_part_4.md
       # - Conclusion: conclusion.md
   - Tools&nbsp<i class="fa-solid fa-gear"></i>: tools.md
-  - Ask a Question&nbsp<i class="fa-solid fa-hand" style="color:#63E6BE;"></i>: slido-QA-iFrame.md
+  # - Ask a Question&nbsp<i class="fa-solid fa-hand" style="color:#63E6BE;"></i>: slido-QA-iFrame.md
   - Cheat Sheet&nbsp<i class="fa-solid fa-screwdriver-wrench" style="color:#1eeb40;"></i>:
       - CheatSheet: cheatsheet.md
       - Challenge Answers: challengeAnswers.md
