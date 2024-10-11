@@ -1,0 +1,25 @@
+<Extensions>
+  <Version>1.11</Version>
+  <Panel>
+    <Order>11</Order>
+    <PanelId>MessageRating</PanelId>
+    <Location>HomeScreenAndCallControls</Location>
+    <Icon>Input</Icon>
+    <Color>#875AE0</Color>
+    <Name>Pressed and Released Demo</Name>
+    <ActivityType>Custom</ActivityType>
+    <Page>
+      <Name>Rating System</Name>
+      <Row>
+        <Name>Row</Name>
+        <Widget>
+          <WidgetId>ratingSystem</WidgetId>
+          <Name>Start Survey</Name>
+          <Type>Button</Type>
+          <Options>size=4</Options>
+        </Widget>
+      </Row>
+      <Options>hideRowNames=1</Options>
+    </Page>
+  </Panel>
+</Extensions>
